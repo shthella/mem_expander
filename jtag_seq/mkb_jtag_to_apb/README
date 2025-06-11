@@ -1,0 +1,30 @@
+## Overview :
+"rd_wr.c" is a low-level C program designed for memory-mapped I/O (MMIO) communication, primarily interfacing with JTAG and APB (Advanced Peripheral Bus) registers. It enables register-based read/write operations using mapped memory and bit-field structured data.
+
+
+## Compilation :
+To compile the program, use:
+     gcc -o rd_wr rd_wr.c 
+This generates an executable named rd_wr.
+
+## Usage :
+Once compiled, the program can be executed with the appropriate parameters.Run the compiled executable with necessary permissions:
+    ./rd_wr <read_write_flag> <addr> <data>  
+
+<read_write_flag>: Specifies the operation type (0 for read, 1 for write).
+<addr>: The memory-mapped register address (must be valid).
+<data>: The data to be written (only required for write operations).
+
+  ##To read from a register:
+    ./rd_wr 0 <addr>
+
+  ##To write to a register:
+    ./rd_wr 1 <addr> <data>
+
+<addr> should be a valid memory-mapped register address, and <data> is required only for write operations.
+
+
+## Error Handling
+If permission errors occur, try running:
+   sudo ./rd_wr <read_write_flag> <addr> <data>  
+ 

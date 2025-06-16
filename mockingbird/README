@@ -1,0 +1,56 @@
+## MKB
+
+## Removed Xilinx.spec and xil libraries 
+ 
+##Introduction 
+  In this project, there are source and header files for DDR4, D2D, and I3C. These are intended to be loaded onto the Zybo board via JTAG.
+ 
+##Prerequisites
+ Install the ARM toolchain (required to build the firmware) and XSDB Tool:
+ 
+ Command:
+	sudo apt install gcc-arm-none-eabi
+
+ ##Building the ELF:
+   Navigate to the MKB project directory and run:
+
+  	cd MKB
+  	make
+
+  This will generate the ELF file: <name>.elf
+
+##Flashing to Zybo:
+  Use XSDB or XSCT to load the ELF file onto the Zybo board:
+
+  	./xsdb
+	connect
+	targets
+	stop
+	dow <path to .elf>
+	con
+
+  Make sure the board is connected via JTAG before flashing.
+
+##Serial Output
+  You can view UART output using tools like:
+    • PuTTY
+    • Gtkterm
+    • screen
+
+  Example using screen:
+   screen /dev/ttyUSB1 115200
+
+   The serial output starts after the ELF is successfully loaded.
+
+##Error Handling
+
+ • Toolchain not found
+  Ensure that gcc-arm-none-eabi is correctly installed and available in your PATH. use this command to check the arm-toolchain. 
+                          
+  Command:
+ 	arm-none-eabi-gcc --version
+
+  If not found, re-install:
+    	sudo apt install gcc-arm-none-eabi
+
+

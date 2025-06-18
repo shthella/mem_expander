@@ -3,10 +3,16 @@
 
 #include <stdio.h>
 #include "uart.h"
+typedef enum {
+	TEST_SUCCESS,
+	TEST_FAILURE
+} e_status;
+
 #define ENABLE_PRINTF 1
 
 #define DDR_ARCH_BASE_ADDR 0x22000000
 #define DMEM_BASE_ADDR 0x54000
+
 
 #ifdef ENABLE_PRINTF
 #define readl(a)      (*(volatile unsigned int *)((DDR_ARCH_BASE_ADDR) + ((a) << 2)))
@@ -24,6 +30,12 @@
 /* read() and write() defined for reset of the ddr phy init */
 #define write_mc(a, v)  (*(volatile unsigned int *)(a)) = (unsigned int)(v)
 #define read_mc(a)      (*(volatile unsigned int *)(a))
+#define readc(a)      (*(volatile unsigned char *)(a))
+#define writec(v, a)  (*(volatile unsigned char *)(a)) = (unsigned char)(v)
+#define reads(a)      (*(volatile unsigned short *)(a))
+#define writes(v, a)  (*(volatile unsigned short *)(a)) = (unsigned short)(v)
+#define readw(a)      (*(volatile unsigned long long *)(a))
+#define writew(v, a)  (*(volatile unsigned long long *)(a)) = (unsigned long long)(v)
 #endif
 
 /* Below variables updated from Flash */

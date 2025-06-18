@@ -4,7 +4,7 @@
 //#include <stdio.h>
 //#include <stdlib.h>
 //#include <unistd.h>
-#include "common.h"
+
 #define I3C_ID_1 	11
 #define I3C_ID_0 	10
 
@@ -98,7 +98,7 @@ int get_i3c_address(uint8_t* i3c_address);
 uint8_t set_i3c_ready(void);
 uint8_t get_i3c_ready(uint8_t inst);
 uint8_t  toggle_i3c_ready(void);
-uint8_t  debug_gpio_set(uint8_t state);
+
 void transfer_cmd(uint32_t field, uint32_t val);
 void transfer_arg(uint32_t field, uint32_t val);
 void short_data_arg(uint32_t field, uint32_t val);

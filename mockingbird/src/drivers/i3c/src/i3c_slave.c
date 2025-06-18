@@ -1,6 +1,5 @@
-#include <gpio.h>
-#include <interrupt.h>
-#include "riscv_cpu.h"
+#include "gpio.h"
+
 #include "i3c.h"
 #include "i3cs_reg.h"
 #include "xil_exception.h"
@@ -13,12 +12,9 @@ uint32_t transmit_command;
 volatile uint32_t jumpToTIM = 0;
 volatile uint32_t d2d_status = 0;
 
-struct metal_interrupt* sInterrupt;
-struct metal_interrupt *s_cpu_intr;
-struct metal_cpu *s_cpu;
 
 #ifdef BOOTROM_MODE
-extern uint8_t debug_gpio_set(uint8_t state);
+extern void debug_gpio_set(uint8_t state);
 #endif
 
 uint32_t i3c_slave_get_d2d_status(void) {
@@ -410,9 +406,9 @@ xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_
 
 	I3C_REG_WRITE(0x0, I3CS_INTR_STATUS_EN);
 	I3C_REG_WRITE(0x0, I3CS_INTR_SIGNAL_EN);
-    metal_interrupt_disable(sInterrupt, I3C_INTERRUPT_ID);
-    metal_interrupt_disable(s_cpu_intr, I3C_INTERRUPT_ID);
-    metal_interrupt_disable(s_cpu_intr, METAL_INTERRUPT_ID_BASE);
+   // metal_interrupt_disable(sInterrupt, I3C_INTERRUPT_ID);
+   // metal_interrupt_disable(s_cpu_intr, I3C_INTERRUPT_ID);
+   // metal_interrupt_disable(s_cpu_intr, METAL_INTERRUPT_ID_BASE);
 	//Jump execution to TIM
 	void (*jump_to_TIM_address)(void) = (void (*)())jumpToTIM;
 	jump_to_TIM_address();

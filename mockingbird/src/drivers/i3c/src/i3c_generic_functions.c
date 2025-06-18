@@ -10,19 +10,14 @@ extern uint32_t transmit_command;
 // Read I3C ready pin. inst is the GFH instance number
 uint8_t get_i3c_ready(uint8_t inst)
 {
-	struct metal_gpio *gpio;
-
-	//gpio = metal_gpio_get_device(0);
-	if (gpio == NULL) {
-		return TEST_FAILURE;
-	}
+	
 
 	if(I3C_NUM_SLAVE_DEVICES > 0)
 	{
 		if(inst == 0x0)
 		{
-//			metal_gpio_enable_input(gpio, 18);
-//			return metal_gpio_get_input_pin(gpio, 18);
+			gpio_enable_input(18);
+			return gpio_get_input_pin(18);
 			return 1;
 		}
 	}
@@ -30,24 +25,24 @@ uint8_t get_i3c_ready(uint8_t inst)
 	{
 		if(inst == 0x1)
 		{
-			metal_gpio_enable_input(gpio, 17);
-			return metal_gpio_get_input_pin(gpio, 17);
+			gpio_enable_input( 17);
+			return gpio_get_input_pin( 17);
 		}
 	}
 	if(I3C_NUM_SLAVE_DEVICES > 2)
 	{
 		if(inst == 0x2)
 		{
-			metal_gpio_enable_input(gpio, 16);
-			return metal_gpio_get_input_pin(gpio, 16);
+			gpio_enable_input(16);
+			return gpio_get_input_pin(16);
 		}
 	}
 	if(I3C_NUM_SLAVE_DEVICES > 3)
 	{
 		if(inst == 0x3)
 		{
-			metal_gpio_enable_input(gpio, 15);
-			return metal_gpio_get_input_pin(gpio, 15);
+			gpio_enable_input(15);
+			return gpio_get_input_pin(15);
 		}
 	}
 }
@@ -56,18 +51,11 @@ int get_i3c_address(uint8_t* i3c_address)
 {
 	e_gpio_state gpio_state;
 
-	struct metal_gpio *gpio;
-
-//	gpio = metal_gpio_get_device(0);
-	if (gpio == NULL) {
-		return TEST_FAILURE;
-	}
-
-//	metal_gpio_enable_input(gpio, I3C_ID_1);
-//	metal_gpio_enable_input(gpio, I3C_ID_0);
-//	gpio_state = metal_gpio_get_input_pin(gpio, I3C_ID_1);
-	*i3c_address = *i3c_address | gpio_state << 1;
-//	gpio_state = metal_gpio_get_input_pin(gpio, I3C_ID_0);
+	gpio_enable_input(I3C_ID_1);
+	gpio_enable_input(I3C_ID_0);
+	gpio_state = gpio_get_input_pin(I3C_ID_1);
+	*i3c_address = *i3c_address | gpio_state << 1;	
+	gpio_state = gpio_get_input_pin(I3C_ID_0);
 	*i3c_address = *i3c_address | gpio_state << 0;
 
 	return TEST_SUCCESS;
@@ -76,55 +64,33 @@ int get_i3c_address(uint8_t* i3c_address)
 
 uint8_t set_i3c_ready(void) 
 {
-	struct metal_gpio *gpio;
-
-//	gpio = metal_gpio_get_device(0);
-	if (gpio == NULL) {
-		return TEST_FAILURE;
-	}
-
-	//metal_gpio_enable_output(gpio, GFH_I3C_READY);
-//	metal_gpio_set_pin(gpio, GFH_I3C_READY,1);
+	gpio_enable_output(GFH_I3C_READY);
+	gpio_set_pin(GFH_I3C_READY,1);
 
 	return TEST_SUCCESS;
 }
 
 uint8_t toggle_i3c_ready(void)
 {
-	struct metal_gpio *gpio;
-
-//	gpio = metal_gpio_get_device(0);
-	if (gpio == NULL) {
-		return TEST_FAILURE;
-	}
 
 	uint8_t i3c_ready = 0;
 
-//	i3c_ready = metal_gpio_get_input_pin(gpio, GFH_I3C_READY);
-//	metal_gpio_set_pin(gpio, GFH_I3C_READY,i3c_ready ^ 0x1);
+	i3c_ready = gpio_get_input_pin(GFH_I3C_READY);
+	gpio_set_pin(GFH_I3C_READY,i3c_ready ^ 0x1);
 
 	return 0;
 }
 
-uint8_t debug_gpio_set(uint8_t state)
-{
-	struct metal_gpio *gpio;
+uint8_t debug_gpio_set(uint8_t state) {
 
-//	gpio = metal_gpio_get_device(0);
-	if (gpio == NULL) {
-		return TEST_FAILURE;
-	}
+    gpio_enable_output(PIN_12);
+    gpio_enable_output(PIN_13);
+    gpio_enable_output(PIN_14);
 
-//	metal_gpio_enable_output(gpio, DEBUG_GPIO12); //pin 12
-//	metal_gpio_enable_output(gpio, DEBUG_GPIO13); //pin 13
-//	metal_gpio_enable_output(gpio, DEBUG_GPIO14); //pin 14
+    gpio_set_pin(PIN_12, (state >> 2) & 0x1);
+    gpio_set_pin(PIN_13, (state >> 1) & 0x1);
+    gpio_set_pin(PIN_14, (state >> 0) & 0x1);
 
-	// Bit 2: GPIO_12, Bit 1: GPIO_13, Bit 0: GPIO_14
-//	metal_gpio_set_pin(gpio, DEBUG_GPIO12, (state >> 0x2) & 0x1);
-//	metal_gpio_set_pin(gpio, DEBUG_GPIO13, (state >> 0x1) & 0x1);
-//	metal_gpio_set_pin(gpio, DEBUG_GPIO14, (state >> 0x0) & 0x1);
-
-	return 0;
 }
 
 void transfer_cmd(uint32_t field, uint32_t val)

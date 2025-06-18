@@ -1,12 +1,9 @@
-#include <gpio.h>
-#include <interrupt.h>
-#include "riscv_cpu.h"
-#include "inc/i3c.h"
-#include "i3cs_reg.h"
+#include "gpio.h"
 
-#include "xil_exception.h"                 // for Xil_ExceptionHandler
-#include "FreeRTOS.h"
-#include "portmacro.h"
+#include "i3c.h"
+#include "i3cs_reg.h"
+#include "xil_exception.h"
+
 uint32_t transmit_command;
 /* code generalised for modifying BUF 
  * threshold with i3c_dport_q_entries */
@@ -15,12 +12,9 @@ uint32_t transmit_command;
 volatile uint32_t jumpToTIM = 0;
 volatile uint32_t d2d_status = 0;
 
-struct metal_interrupt* sInterrupt;
-struct metal_interrupt *s_cpu_intr;
-struct metal_cpu *s_cpu;
 
 #ifdef BOOTROM_MODE
-extern uint8_t debug_gpio_set(uint8_t state);
+extern void debug_gpio_set(uint8_t state);
 #endif
 
 uint32_t i3c_slave_get_d2d_status(void) {
@@ -286,37 +280,8 @@ int32_t i3c_slave_init(void)
 		return 1;
 	}
 #endif	
-//	s_cpu = metal_cpu_get(metal_cpu_get_current_hartid());
-	if (s_cpu == NULL) {
-	     return 2;
-	}
-	
-	//s_cpu_intr = metal_cpu_interrupt_controller(s_cpu);
-	if (s_cpu_intr == NULL) {
-	     //printf("Cpu interrupt controller failed");
-	     return 3;
-	}
-	
-//	metal_interrupt_init(s_cpu_intr);
-	
-//	sInterrupt = metal_interrupt_get_controller(METAL_CLIC_CONTROLLER,metal_cpu_get_current_hartid());
-	if(sInterrupt == NULL) {
-		//printf("Get interrupt controller failed");
-	}
-	
-//	metal_interrupt_init(sInterrupt);
-/*	
-	if(metal_interrupt_set_vector_mode(sInterrupt, METAL_SELECTIVE_VECTOR_MODE) != 0) {
-		//printf("Set interrupt vector mode failed");
-		return 4;
-	}
-	
-	if(metal_interrupt_register_vector_handler(sInterrupt,I3C_INTERRUPT_ID,&i3c_slave_interrupt_handler,NULL) != 0) {
-		//printf("Set interrupt register handler failed");
-		return 5;
-	}
-*/	
-	xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
+
+xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
         vPortEnableInterrupt(I3C_INTERRUPT_ID);
         
 #ifdef BOOTROM_MODE
@@ -441,9 +406,9 @@ int32_t i3c_slave_init(void)
 
 	I3C_REG_WRITE(0x0, I3CS_INTR_STATUS_EN);
 	I3C_REG_WRITE(0x0, I3CS_INTR_SIGNAL_EN);
-    metal_interrupt_disable(sInterrupt, I3C_INTERRUPT_ID);
-    metal_interrupt_disable(s_cpu_intr, I3C_INTERRUPT_ID);
-    metal_interrupt_disable(s_cpu_intr, METAL_INTERRUPT_ID_BASE);
+   // metal_interrupt_disable(sInterrupt, I3C_INTERRUPT_ID);
+   // metal_interrupt_disable(s_cpu_intr, I3C_INTERRUPT_ID);
+   // metal_interrupt_disable(s_cpu_intr, METAL_INTERRUPT_ID_BASE);
 	//Jump execution to TIM
 	void (*jump_to_TIM_address)(void) = (void (*)())jumpToTIM;
 	jump_to_TIM_address();

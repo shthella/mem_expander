@@ -1,20 +1,17 @@
 
 #include "i3c.h"
 #include "i3cm_reg.h"
-
-
-#include "xil_exception.h"                 // for Xil_ExceptionHandler
+#include "common.h"
+#include "xil_exception.h"
 #include "FreeRTOS.h"
 #include "portmacro.h"
+
  uint32_t transfer_command = 0;
  uint32_t transfer_argument = 0;
  uint32_t short_data_argument = 0;
  uint32_t address_assignment_command = 0;
 
 
-struct metal_interrupt* mInterrupt;
-struct metal_interrupt *m_cpu_intr;
-struct metal_cpu *m_cpu;
 
 /* code generalised for modifying BUF 
  * threshold with i3c_dport_q_entries */
@@ -73,22 +70,27 @@ void i3c_master_interrupt_handler(void)
 		//TODO: Implement handler
 	}
 
-//	metal_interrupt_clear(mInterrupt,I3C_INTERRUPT_ID);
  
 }
 int32_t i3c_master_init()
 {
 	uint32_t rddata;
     uint32_t dEnt = 0;
+  	//interrupt Registration 
+	xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
+        vPortEnableInterrupt(I3C_INTERRUPT_ID);//enable interrupts 
+	
 	
 
 	
 	I3C_REG_WRITE(0x0000040a, I3CM_QUEUE_THLD_CTRL);
+	printf("is it working I3C_REG_WRITE\r\n");
     dEnt = 0;while (!((i3c_dport_q_entries >> (dEnt + 1)) & 0x1)){dEnt++;}
 	I3C_REG_WRITE((((0x02010002) & ~(0x7<<8)) | ((dEnt &0x7) << 8)),
                     I3CM_DATA_BUFFER_THLD_CTRL);
 	I3C_REG_WRITE(0x00000000, I3CM_DEVICE_CTRL_EXTENDED);
 	I3C_REG_WRITE(0x00000236, I3CM_INTR_STATUS_EN);
+	printf("is it working I3C_REG_WRITEaddress %08x\r\n",I3CM_INTR_STATUS_EN);
 	//I3C_REG_WRITE(0x00000236, I3CM_INTR_SIGNAL_EN );
 	I3C_REG_WRITE(0x80550000, I3CM_DEVICE_ADDR_ADDR);
 	I3C_REG_WRITE(0x000a0028, I3CM_SCL_I3C_OD_TIMING);
@@ -110,9 +112,9 @@ int32_t i3c_master_init()
 	if(I3C_NUM_SLAVE_DEVICES > 3)
 		I3C_REG_WRITE(0x60e60053, I3CM_DEV_ADDR_TABLE_LOC4 ); // DYN_ADDR = 66 DEV_INDEX 3
 
- 	xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_master_interrupt_handler, NULL);
-        vPortEnableInterrupt(I3C_INTERRUPT_ID);
-    return 0;	 
+
+		printf("i3c_master_init is completed\r\n");
+ 	return 0;	 
 }
 
 void i3c_master_assign_address()
@@ -466,6 +468,9 @@ int32_t i3c_master_send_jump_to_tim(struct slave_table *pGfh, uint32_t address)
 }
 
 int32_t i3c_master_send_d2d_status(struct slave_table *pGfh, uint32_t d2d_mode) {
+	
+	printf("the i3c master send d2d status is called from i3c master.c file\r\n");
+	
 	uint32_t status;
 	uint8_t gpio_val, dPos = 0;
     I3C_CMD i3c_cmd;

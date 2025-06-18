@@ -1,7 +1,7 @@
-#include "riscv_cpu.h"
+
 #include "i3c.h"
 #include "i3cm_reg.h"
-#include "cpu.h"
+#include "common.h"
 #include "xil_exception.h"
 #include "FreeRTOS.h"
 #include "portmacro.h"
@@ -75,17 +75,10 @@ void i3c_master_interrupt_handler(void)
 int32_t i3c_master_init()
 {
 	uint32_t rddata;
-    uint32_t dEnt = 0;
-  //interrupt Registration 
-xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
-        vPortEnableInterrupt(I3C_INTERRUPT_ID);//enable interrupts 
-	
-	
-
-	
+        uint32_t dEnt = 0;
 	I3C_REG_WRITE(0x0000040a, I3CM_QUEUE_THLD_CTRL);
 	printf("is it working I3C_REG_WRITE\r\n");
-    dEnt = 0;while (!((i3c_dport_q_entries >> (dEnt + 1)) & 0x1)){dEnt++;}
+        dEnt = 0;while (!((i3c_dport_q_entries >> (dEnt + 1)) & 0x1)){dEnt++;}
 	I3C_REG_WRITE((((0x02010002) & ~(0x7<<8)) | ((dEnt &0x7) << 8)),
                     I3CM_DATA_BUFFER_THLD_CTRL);
 	I3C_REG_WRITE(0x00000000, I3CM_DEVICE_CTRL_EXTENDED);
@@ -112,7 +105,9 @@ xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_
 	if(I3C_NUM_SLAVE_DEVICES > 3)
 		I3C_REG_WRITE(0x60e60053, I3CM_DEV_ADDR_TABLE_LOC4 ); // DYN_ADDR = 66 DEV_INDEX 3
 
-
+	//interrupt Registration 
+	xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
+        vPortEnableInterrupt(I3C_INTERRUPT_ID);//enable interrupts 
 		printf("i3c_master_init is completed\r\n");
  	return 0;	 
 }

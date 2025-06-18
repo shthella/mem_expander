@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "uart.h"
+#include "gpio.h"
 #define I3C_EN
 #define D2D_EN
 #undef I3C_COPY_EN
 
-#include <gpio.h>
 #include <interrupt.h>
 #include <riscv_cpu.h>
 #include <flash_mem_layout.h>
@@ -92,27 +92,24 @@ int main() {
     uart_init();
 
 #if 1	
-
 	debug_gpio_set(0x7);	// DEBUG: Indicating TIM execution started
+
 	/*********************** I3C ************************************/
 	uint32_t data = 0x0;
-	struct metal_gpio *gpio;
-
 	// Enable PLL and wait for the lock
 	mkb_pll_enable();
 
 #ifdef I3C_EN
-
 	i3c_master_init();
-
+	
 	if(I3C_NUM_SLAVE_DEVICES > 0)
-		metal_gpio_enable_input(gpio, GFH1_I3C_SLAVE_READY);
+		gpio_enable_input(GFH1_I3C_SLAVE_READY);
 	if(I3C_NUM_SLAVE_DEVICES > 1)
-		metal_gpio_enable_input(gpio, GFH2_I3C_SLAVE_READY);
+		gpio_enable_input(GFH2_I3C_SLAVE_READY);
 	if(I3C_NUM_SLAVE_DEVICES > 2)
-		metal_gpio_enable_input(gpio, GFH3_I3C_SLAVE_READY);
+		gpio_enable_input(GFH3_I3C_SLAVE_READY);
 	if(I3C_NUM_SLAVE_DEVICES > 3)
-		metal_gpio_enable_input(gpio, GFH4_I3C_SLAVE_READY);
+		gpio_enable_input(GFH4_I3C_SLAVE_READY);
 
 
 	//Wait until all the GFH slaves are ready.

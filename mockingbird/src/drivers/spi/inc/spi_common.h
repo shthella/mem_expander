@@ -1,10 +1,10 @@
 #ifndef SPI_H
 #define SPI_H
 
-#include <common/sflash.h>
+#include <sflash.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <common/common.h>
+#include <common.h>
 
 #define SF_SRAM_ADDRESS     0x26001600
 #define SF_CSR_BASE_ADDR	0x26001000

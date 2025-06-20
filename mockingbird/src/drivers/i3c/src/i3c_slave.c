@@ -14,7 +14,7 @@ volatile uint32_t d2d_status = 0;
 
 
 #ifdef BOOTROM_MODE
-extern void debug_gpio_set(uint8_t state);
+extern uint8_t debug_gpio_set(uint8_t state);
 #endif
 
 uint32_t i3c_slave_get_d2d_status(void) {
@@ -32,7 +32,7 @@ void i3c_slave_interrupt_handler(void)
 	uint32_t i3c_dport_q_entries = 4;
 	volatile uint32_t rddata[i3c_dport_q_entries];
 	volatile uint32_t wrdata[i3c_dport_q_entries];
-    uint8_t no_gpio_toggle = 0;
+        uint8_t no_gpio_toggle = 0;
 	uint32_t intr_status = 0;
 	static uint8_t tid;
 	uint8_t queue_level=0;
@@ -406,9 +406,6 @@ xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_
 
 	I3C_REG_WRITE(0x0, I3CS_INTR_STATUS_EN);
 	I3C_REG_WRITE(0x0, I3CS_INTR_SIGNAL_EN);
-   // metal_interrupt_disable(sInterrupt, I3C_INTERRUPT_ID);
-   // metal_interrupt_disable(s_cpu_intr, I3C_INTERRUPT_ID);
-   // metal_interrupt_disable(s_cpu_intr, METAL_INTERRUPT_ID_BASE);
 	//Jump execution to TIM
 	void (*jump_to_TIM_address)(void) = (void (*)())jumpToTIM;
 	jump_to_TIM_address();

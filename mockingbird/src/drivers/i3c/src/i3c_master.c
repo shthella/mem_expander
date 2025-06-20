@@ -73,7 +73,7 @@ void i3c_master_interrupt_handler(void)
  
 }
 int32_t i3c_master_init()
-{
+{		printf("i3c_master_init is started\r\n");
 	uint32_t rddata;
         uint32_t dEnt = 0;
 	I3C_REG_WRITE(0x0000040a, I3CM_QUEUE_THLD_CTRL);
@@ -107,8 +107,9 @@ int32_t i3c_master_init()
 
 	//interrupt Registration 
 	xPortInstallInterruptHandler(I3C_INTERRUPT_ID, (Xil_ExceptionHandler)&i3c_slave_interrupt_handler, NULL);
-        vPortEnableInterrupt(I3C_INTERRUPT_ID);//enable interrupts 
-		printf("i3c_master_init is completed\r\n");
+      	vPortEnableInterrupt(I3C_INTERRUPT_ID);//enable interrupts 
+	
+	printf("i3c_master_init is completed\r\n");
  	return 0;	 
 }
 

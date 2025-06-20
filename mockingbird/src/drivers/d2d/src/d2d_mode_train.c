@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
-#include <common/compiler.h>
+#include <compiler.h>
 
-#include <common/cpu.h>
+#include <cpu.h>
 
 #include "d2d.h"
 #include <interrupt.h>
@@ -731,7 +731,7 @@ int32_t d2d_rx_train(blynx_bow_t *pD2dPhy, D2dLLRegBlock *pD2dLL){
         while(!timer_triggered) {
             __asm__ volatile ("wfi");
         }
-#endif   
+#endif
 
     } /* End of word alignment */
 

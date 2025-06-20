@@ -182,28 +182,18 @@
 #define I3CS_I3C_VER_TYPE                 (I3CS_BASE_ADDR+ 0xe4)
 #define I3CS_QUEUE_SIZE_CAPABILITY           (I3CS_BASE_ADDR+ 0xe8)
 
-//#define I3C_REG_READ       printf("Value %x\n", a)
-//#define I3C_REG_WRITE	   printf("0x%x 0x%x\n", a, v)
+
 #define I3C_REG_READ_C(a)      (*(volatile uint8_t *)(a))
 #define I3C_REG_WRITE_C(v, a)  (*(volatile uint8_t *)(a)) = (uint8_t)(v)
 #define I3C_REG_READ_S(a)      (*(volatile uint16_t *)(a))
 #define I3C_REG_WRITE_S(v, a)  (*(volatile uint16_t *)(a)) = (uint16_t)(v)
-#define I3C_REG_READ(a)      (*(volatile uint32_t *)(a))
-#define I3C_REG_WRITE(v, a)  (*(volatile uint32_t *)(a)) = (uint32_t)(v)
+#define I3C_REG_READ(a)      	(*(volatile uint32_t *)(a))
+#define I3C_REG_WRITE(v, a) 	printf("I3C_REG_WRITE: addr=0x%08x, val=0x%08x\r\n", (a), (v))
 #define I3C_REG_READ_W(a)      (*(volatile uint64_t *)(a))
 #define I3C_REG_WRITE_W(v, a)  (*(volatile uint64_t *)(a)) = (uint64_t)(v)
 
 #define I3C_NUM_SLAVE_DEVICES   1
-#if 0
-static inline uint32_t i3c_reg_read(uint32_t addr) {
-    return *(volatile uint32_t *)addr;
-}
 
-static inline void i3c_reg_write(uint32_t value, uint32_t addr) {
-    *(volatile uint32_t *)addr = value;
-}
-
-#endif
 struct slave_table
 {
 	uint32_t gfh_inst;
@@ -215,9 +205,6 @@ typedef struct {
     uint32_t data0;
     uint32_t *pData;
 } I3C_CMD;
-
-
-
 
 void map_devIndx_to_DA(struct slave_table (*gfh_slave_table)[]);
 int32_t i3c_slave_init(void);

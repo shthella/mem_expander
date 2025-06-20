@@ -31,7 +31,7 @@ void main()
 #ifdef I3C_EN
 	err = i3c_slave_init();
     if (err !=0){
-        //printf("ERROR: I3C Slave init failed - %d\n", err);
+        printf("ERROR: I3C Slave init failed - %d\n", err);
         return -1;
     }
     
@@ -79,7 +79,7 @@ void main()
 
 
 	while(1){
-		__asm__ volatile ("wfi");
+		//Forever loop for FreeRTOS
 	}
 }
 

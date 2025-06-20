@@ -9,6 +9,7 @@
 #include <riscv_cpu.h>
 #include <flash_mem_layout.h>
 #include <spi_common.h>
+#include "jtag_to_apb.h"
 
 #ifdef I3C_EN
 #include "i3c.h"
@@ -90,7 +91,7 @@ int32_t master_fw_upload(struct slave_table *pGfh, uint32_t dAddr, uint32_t labl
 
 int main() {
     uart_init();
-
+    jtag_main();//jtag address mapping
 #if 1	
 	debug_gpio_set(0x7);	// DEBUG: Indicating TIM execution started
 
@@ -100,8 +101,9 @@ int main() {
 	mkb_pll_enable();
 
 #ifdef I3C_EN
+
 	i3c_master_init();
-	
+
 	if(I3C_NUM_SLAVE_DEVICES > 0)
 		gpio_enable_input(GFH1_I3C_SLAVE_READY);
 	if(I3C_NUM_SLAVE_DEVICES > 1)
@@ -132,7 +134,7 @@ int main() {
 		while(get_i3c_ready(GFH3_I3C_SLAVE));
 	if(I3C_NUM_SLAVE_DEVICES > 3)
 		while(get_i3c_ready(GFH4_I3C_SLAVE));
-	
+
 	// Map DA to dev_index
 	map_devIndx_to_DA(&gfh_slave);
 #endif /* I3C_EN */
@@ -143,16 +145,17 @@ int main() {
 #ifdef I3C_EN
 #ifdef I3C_COPY_EN
 
-        master_fw_upload(&gfh_slave[0], TIM1_ADDR, LC_GFH_D2D);
-		i3c_master_send_jump_to_tim(&gfh_slave[0], TIM1_ADDR);
+      //  master_fw_upload(&gfh_slave[0], TIM1_ADDR, LC_GFH_D2D);
+	//	i3c_master_send_jump_to_tim(&gfh_slave[0], TIM1_ADDR);
 #else /* !I3C_COPY_EN direct jump to backdoor copied tim */
-		i3c_master_send_jump_to_tim(&gfh_slave[0], TIM1_ADDR);
+	//	i3c_master_send_jump_to_tim(&gfh_slave[0], TIM1_ADDR);
 		
 #endif /* !I3C_COPY_EN */
 
 #ifdef D2D_EN   //This code is part of D2D will enable this along with D2D
 	printf("%s function is running from mkb main\r\n" , __func__);
 	    d2d_mode_init(&d2dPhy, &d2dLL);
+	    
 
 		i3c_master_send_d2d_status(&gfh_slave[0], 0x1);
         d2d_set_rx_mode_train(&d2dPhy, &d2dLL);

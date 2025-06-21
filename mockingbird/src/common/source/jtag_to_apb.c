@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <stdbool.h>
+#include "jtag_to_apb.h"
 
 #define SIZE 0x10000
 

@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <errno.h>
 #include <stdbool.h>
-
+#include "jtag_to_apb.h"
 #define SIZE 0x10000
 
 #define REG_LEN_OFFSET      (0x00 / sizeof(uint32_t))    // Length of shift operation in bits

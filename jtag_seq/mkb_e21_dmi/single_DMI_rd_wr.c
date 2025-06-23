@@ -100,8 +100,8 @@ void Read_DMI(uint8_t addr, uint32_t *data, bool*err);
 void Write_DMI(uint8_t addr,uint32_t data); 
 
 //register access GPR's
-void Read_Reg(uint8_t regno, uint64_t *data);
-void Write_Reg(uint8_t regno, uint64_t data);
+void Read_Reg(uint16_t regno, uint64_t *data);
+void Write_Reg(uint16_t regno, uint64_t data);
 
 //CSR register access
 void Write_CSR(uint32_t regno,uint64_t data);
@@ -274,13 +274,13 @@ void step(){
 }
 //register access
 //for gpr to perfom read /write using abstract command    
-void Write_Reg(uint8_t regno, uint64_t data) {
+void Write_Reg(uint16_t regno, uint64_t data) {
 	Write_DMI(DATA0, data);		                     //write to addr(DATA0=0x04//values in these registers may not be preserved after an command is executed,if command fails there is no data in this registers  
 	Write_DMI(COMMAND, COMMAND_WRITE_32 + regno);     //addr=command(0x17),transfer,write,0x300
 	WaitAbstract();
 }
 
-void Read_Reg(uint8_t regno,uint64_t *data){
+void Read_Reg(uint16_t regno,uint64_t *data){
 	bool *err=false;
 	uint32_t low=0,high=0;
 	Write_DMI(COMMAND, COMMAND_READ_32 + regno);//write to address command(0x17),transfer and size=32
@@ -466,7 +466,7 @@ int main(int argc, char *argv[]) {
 					return -1;
 				}
 				uint64_t val64;
-				Read_Reg((uint8_t)addr, &val64);
+				Read_Reg((uint16_t)addr, &val64);
 				printf("Reg[%u] = 0x%016lx\n", addr, val64);
 				break;
 			}
@@ -475,7 +475,7 @@ int main(int argc, char *argv[]) {
 					printf("Usage: %s 6 <regno> <data>\n", argv[0]);
 					return -1;
 				}
-				Write_Reg((uint8_t)addr, (uint64_t)data);
+				Write_Reg((uint16_t)addr, (uint64_t)data);
 				break;
 			}
 		case 7: { // Read_CSR
